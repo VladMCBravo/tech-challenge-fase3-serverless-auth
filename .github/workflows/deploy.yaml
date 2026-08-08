@@ -1,0 +1,46 @@
+name: CI/CD - Serverless Auth (AWS SAM)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Configurar Credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Instalar AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Build da aplicação SAM
+        run: sam build
+
+      - name: Deploy da aplicação SAM
+        run: >
+          sam deploy 
+          --stack-name oficina-auth-stack 
+          --resolve-s3 
+          --capabilities CAPABILITY_IAM 
+          --no-confirm-changeset 
+          --no-fail-on-empty-changeset
