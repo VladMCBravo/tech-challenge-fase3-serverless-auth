@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  tech-challenge-fase3-serverless-auth
+  Função Lambda para autenticação de clientes via CPF.
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+
+Resources:
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: app.handler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          # Estas variáveis serão preenchidas na nuvem
+          DATABASE_URL: "postgres://user:pass@host:5432/db" 
+          JWT_SECRET: "fiap-tech-challenge"
+      Events:
+        AuthApi:
+          Type: Api
+          Properties:
+            Path: /auth
+            Method: post
