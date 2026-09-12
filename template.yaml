@@ -18,9 +18,10 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
         - x86_64
+      # ⚠️ ADICIONE ESTA LINHA ABAIXO PARA O AWS ACADEMY NÃO BLOQUEAR:
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
       Environment:
         Variables:
-          # Estas variáveis serão preenchidas na nuvem
           DATABASE_URL: "postgres://user:pass@host:5432/db" 
           JWT_SECRET: "fiap-tech-challenge"
       Events:
