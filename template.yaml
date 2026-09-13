@@ -6,8 +6,8 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 10
-    MemorySize: 128
+    Timeout: 30
+    MemorySize: 256
 
 Resources:
   AuthFunction:
@@ -18,12 +18,24 @@ Resources:
       Runtime: nodejs18.x
       Architectures:
         - x86_64
-      # ⚠️ ADICIONE ESTA LINHA ABAIXO PARA O AWS ACADEMY NÃO BLOQUEAR:
+      # Role do AWS Academy (necessária para o Learner Lab não bloquear)
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+
+      # 👇 Coloca a Lambda DENTRO da VPC, pra ela alcançar o RDS privado.
+      #    Mesmas subnets e security group do RDS (o SG do RDS libera a CIDR da VPC na 5432).
+      VpcConfig:
+        SubnetIds:
+          - subnet-0b868a33706dd184a
+          - subnet-0e66981f57714d07c
+        SecurityGroupIds:
+          - sg-0f94c8b808059d61a
+
       Environment:
         Variables:
-          DATABASE_URL: "postgres://user:pass@host:5432/db" 
-          JWT_SECRET: "fiap-tech-challenge"
+          # 👇 URL real do RDS (o mesmo do k8s/secret.yaml do app)
+          DATABASE_URL: "postgresql://postgres:OficinaFiap2026!@oficina-db-prod.ctomhztfsbks.us-east-1.rds.amazonaws.com:5432/postgres"
+          # 👇 MESMO segredo do app (k8s/secret.yaml), senão o app rejeita o token da Lambda
+          JWT_SECRET: "seu-segredo-super-seguro-aqui"
       Events:
         AuthApi:
           Type: Api
