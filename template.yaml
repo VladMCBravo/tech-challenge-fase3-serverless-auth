@@ -22,10 +22,10 @@ Resources:
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
 
       # 👇 Coloca a Lambda DENTRO da VPC, pra ela alcançar o RDS privado.
-      #    Mesmas subnets e security group do RDS (o SG do RDS libera a CIDR da VPC na 5432).
+      #    Usa a MESMA subnet do RDS (subnet-0e6.../us-east-1a) e o SG do RDS.
+      #    (Ficar na mesma subnet do RDS evita depender de NACL entre subnets.)
       VpcConfig:
         SubnetIds:
-          - subnet-0b868a33706dd184a
           - subnet-0e66981f57714d07c
         SecurityGroupIds:
           - sg-0f94c8b808059d61a
